@@ -1,24 +1,32 @@
+from csv import reader
 import numpy as np
-import matplotlib.pyplot as plt
-# from sklearn.datasets import load_digits
 
-# digits = load_digits()
-
-# print(digits.images[0])
 
 class TSNE():
 
     def __init__(self):
-        pass
+        self.all_lists_with_splited_strings = []
 
     def open_data_file(self):
-        self.data_file = open("dialanine-300K.data", "r")
-        self.data_read = self.data_file.read()
-        print(self.data_read[5])
+        self.data_file = open('probnik.csv', 'r')
+        return self.data_file
 
-    def get_one_line(self):
-        for line in self.data_read[5:]:
-            pass
+    def read_data_file(self):
+        self.data_file_read = reader(self.data_file)
+        return self.data_file_read
+
+    def get_one_row(self):
+        for row in self.data_file_read:
+            for i in row:
+                single_number_list = i.split(" ")
+                only_distances_list = single_number_list[6:]
+                self.all_lists_with_splited_strings.append(only_distances_list)
+        # print(self.all_lists_with_splited_strings)
+
+    def make_array(self):
+        arr = np.array(self.all_lists_with_splited_strings)
+        print(arr)
+        return arr
 
     def put_data_into_txt(self):
         self.file_name = 'data_300K_txt.txt'
@@ -35,7 +43,9 @@ class TSNE():
 if __name__ == "__main__":
     program = TSNE()
     program.open_data_file()
-    program.put_data_into_txt()
+    program.read_data_file()
+    program.get_one_row()
+    program.make_array()
 
 
     program.close_data_file()
