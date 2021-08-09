@@ -6,11 +6,11 @@ class TSNE():
 
     def __init__(self):
         self.all_lists_with_splited_strings = []
-        self.all_distances_sorted = []
+        self.all_measurements_of_one_distance = []
         self.variances_list = []
 
     def open_data_file(self):
-        self.data_file = open('probnik.csv', 'r')
+        self.data_file = open('dialanine-300K.data', 'r')
         return self.data_file
 
     def read_data_file(self):
@@ -26,20 +26,24 @@ class TSNE():
         # print(self.all_lists_with_splited_strings)
         # print(len(self.only_distances_list))
 
-    def iterate(self):
-        for i in range(len(self.only_distances_list) - 1):
+    def make_all_vaiances(self):
+        for i in range(len(self.only_distances_list)):
             for j in self.all_lists_with_splited_strings:
-                self.all_distances_sorted.append(float(j[i]))
-            # self.all_distances_sorted.append('|||||||||||||')
-            single_variance = np.var(self.all_distances_sorted)
+                self.all_measurements_of_one_distance.append(float(j[i]))
+            # self.all_measurements_of_one_distance.append('|||||||||||||')
+            single_variance = np.var(self.all_measurements_of_one_distance)
             self.variances_list.append(single_variance)
-        print(self.variances_list)
         
+    def cut_variances_smaller_than_2e4(self):
+        for i in self.variances_list:
+            if i < 2e-4:
+                self.variances_list.remove(i)
+        print(self.variances_list, len(self.variances_list))
 
-    def make_array(self):
-        arr = np.array(self.all_lists_with_splited_strings)
-        # print(arr)
-        return arr
+    # def make_array(self):
+    #     arr = np.array(self.all_lists_with_splited_strings)
+    #     # print(arr)
+    #     return arr
 
     def put_data_into_txt(self):
         self.file_1 = 'data_300K_txt.txt'
@@ -54,7 +58,7 @@ class TSNE():
 
         self.file_3 = 'iterowanie.txt'
         self.world_map_file_1 = open(self.file_3, 'w')
-        self.world_map_file_1.write(str(self.all_distances_sorted))
+        self.world_map_file_1.write(str(self.all_measurements_of_one_distance))
         self.world_map_file_1.close()
 
         self.file_4 = 'variances_list.txt'
@@ -74,9 +78,10 @@ if __name__ == "__main__":
     program.read_data_file()
     program.get_one_row()
 
-    program.iterate()
+    program.make_all_vaiances()
+    program.cut_variances_smaller_than_2e4()
 
-    program.make_array()
+    # program.make_array()
     program.put_data_into_txt()
 
     program.close_data_file()
