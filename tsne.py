@@ -7,7 +7,7 @@ from sklearn.datasets import load_digits
 class ReadAndTransformData():
 
     def __init__(self):
-        self.all_lists_with_splited_strings = []
+        self.all_lists_with_splited_foats = []
         self.all_measurements_of_one_distance = []
         self.variances_list = []
 
@@ -22,30 +22,29 @@ class ReadAndTransformData():
     def get_one_row(self):
         for row in self.data_file_read:
             for i in row:
-                single_number_list = i.split(" ")
-                self.only_distances_list = single_number_list[6:]
-                self.all_lists_with_splited_strings.append(self.only_distances_list)
-        # print(self.all_lists_with_splited_strings)
-        # print(len(self.only_distances_list))
+                single_number_as_string_list = i.split(" ")
+                self.distances_list = single_number_as_string_list[6:]
+                single_number_as_float_list = [float(j) for j in self.distances_list]
+                self.all_lists_with_splited_foats.append(single_number_as_float_list)
 
-    def make_all_vaiances(self):
-        for i in range(len(self.only_distances_list)):
-            for j in self.all_lists_with_splited_strings:
-                self.all_measurements_of_one_distance.append(float(j[i]))
-            # self.all_measurements_of_one_distance.append('|||||||||||||')
+    def make_all_variances(self):
+        for i in range(len(self.distances_list)):
+            for j in self.all_lists_with_splited_foats:
+                self.all_measurements_of_one_distance.append(j[i])
             single_variance = np.var(self.all_measurements_of_one_distance)
             self.variances_list.append(single_variance)
-        
-    def cut_variances_smaller_than_2e4(self):
+
+    def cut_column_if_variance_smaller_than_2e4(self):
         for i in self.variances_list:
             if i < 2e-4:
-                _index = self.variances_list.index(i) + 1
-                print(f'variance no. {_index} was smaller than 2e-4 nm^2, it was removed')
-                self.variances_list.remove(i)
-        print('\n', self.variances_list, '\n', len(self.variances_list))
+                _index_to_cut = self.variances_list.index(i)
+                print(f'variance no. {_index_to_cut + 1} was smaller than 2e-4 nm^2, it was removed')
+                for row in self.all_lists_with_splited_foats:
+                    row.pop(_index_to_cut)
+        # print('\n', self.variances_list, '\n', len(self.all_measurements_of_one_distance))
 
     # def make_array(self):
-    #     arr = np.array(self.all_lists_with_splited_strings)
+    #     arr = np.array(self.all_lists_with_splited_foats)
     #     # print(arr)
     #     return arr
 
@@ -54,9 +53,9 @@ class ReadAndTransformData():
         self.world_map_file_1 = open(self.file_1, 'w')
         self.world_map_file_1.write(str(self.data_file_read))
 
-        self.file_2 = 'all_lists_with_splited_strings.txt'
+        self.file_2 = 'all_lists_with_splited_foats.txt'
         self.world_map_file_2 = open(self.file_2, 'w')
-        self.world_map_file_2.write(str(self.all_lists_with_splited_strings))
+        self.world_map_file_2.write(str(self.all_lists_with_splited_foats))
 
         self.file_3 = 'iterowanie.txt'
         self.world_map_file_3 = open(self.file_3, 'w')
@@ -66,9 +65,6 @@ class ReadAndTransformData():
         self.world_map_file_4 = open(self.file_4, 'w')
         self.world_map_file_4.write(str(self.variances_list))
         
-
-        
-
     def close_data_file(self):
         self.data_file.close()
         self.world_map_file_1.close()
@@ -105,8 +101,8 @@ class Main():
         data_read.open_data_file()
         data_read.read_data_file()
         data_read.get_one_row()
-        data_read.make_all_vaiances()
-        data_read.cut_variances_smaller_than_2e4()
+        data_read.make_all_variances()
+        data_read.cut_column_if_variance_smaller_than_2e4()
         data_read.put_data_into_txt()
         data_read.close_data_file()
 
