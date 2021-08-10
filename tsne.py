@@ -1,5 +1,6 @@
 from csv import reader
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.datasets import load_digits
 
 
@@ -52,41 +53,52 @@ class ReadAndTransformData():
         self.file_1 = 'data_300K_txt.txt'
         self.world_map_file_1 = open(self.file_1, 'w')
         self.world_map_file_1.write(str(self.data_file_read))
-        self.world_map_file_1.close()
 
         self.file_2 = 'all_lists_with_splited_strings.txt'
-        self.world_map_file_1 = open(self.file_2, 'w')
-        self.world_map_file_1.write(str(self.all_lists_with_splited_strings))
-        self.world_map_file_1.close()
+        self.world_map_file_2 = open(self.file_2, 'w')
+        self.world_map_file_2.write(str(self.all_lists_with_splited_strings))
 
         self.file_3 = 'iterowanie.txt'
-        self.world_map_file_1 = open(self.file_3, 'w')
-        self.world_map_file_1.write(str(self.all_measurements_of_one_distance))
-        self.world_map_file_1.close()
+        self.world_map_file_3 = open(self.file_3, 'w')
+        self.world_map_file_3.write(str(self.all_measurements_of_one_distance))
 
         self.file_4 = 'variances_list.txt'
-        self.world_map_file_1 = open(self.file_4, 'w')
-        self.world_map_file_1.write(str(self.variances_list))
-        self.world_map_file_1.close()
+        self.world_map_file_4 = open(self.file_4, 'w')
+        self.world_map_file_4.write(str(self.variances_list))
+        
 
         
 
     def close_data_file(self):
-        return self.data_file.close()
-
+        self.data_file.close()
+        self.world_map_file_1.close()
+        self.world_map_file_2.close()
+        self.world_map_file_3.close()
+        self.world_map_file_4.close()
 
 
 class TSNE():
 
     def __init__(self):
-        pass
+        self.digits = load_digits()
+        # print(self.digits.images[0])
 
+    def show_plots(self):
+        self.fig = plt.figure(figsize=(12, 12))
+        self.fig.subplots_adjust(left=0, right=1, bottom=0, top=1, hspace=0.05, wspace=0.05)
+        for i in range(64):
+            ax = self.fig.add_subplot(8, 8, i + 1, xticks=[], yticks=[])
+            ax.imshow(self.digits.images[i], cmap=plt.cm.binary, interpolation='none')
+            ax.text(0, 7, str(self.digits.target[i]))
+
+        plt.show()
 
 
 class Main():
 
     def __init__(self):
         self.read_data()
+        self.load_tSNE()
 
     def read_data(self):
         data_read = ReadAndTransformData()
@@ -98,6 +110,10 @@ class Main():
         data_read.put_data_into_txt()
         data_read.close_data_file()
 
+    def load_tSNE(self):
+        tsne = TSNE()
+        tsne.show_plots()
+        
         
 if __name__ == "__main__":
     main = Main()
