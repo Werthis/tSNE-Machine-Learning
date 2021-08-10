@@ -1,8 +1,9 @@
 from csv import reader
 import numpy as np
+from sklearn.datasets import load_digits
 
 
-class TSNE():
+class ReadAndTransformData():
 
     def __init__(self):
         self.all_lists_with_splited_strings = []
@@ -37,8 +38,10 @@ class TSNE():
     def cut_variances_smaller_than_2e4(self):
         for i in self.variances_list:
             if i < 2e-4:
+                _index = self.variances_list.index(i) + 1
+                print(f'variance no. {_index} was smaller than 2e-4 nm^2, it was removed')
                 self.variances_list.remove(i)
-        print(self.variances_list, len(self.variances_list))
+        print('\n', self.variances_list, '\n', len(self.variances_list))
 
     # def make_array(self):
     #     arr = np.array(self.all_lists_with_splited_strings)
@@ -71,17 +74,30 @@ class TSNE():
     def close_data_file(self):
         return self.data_file.close()
 
+
+
+class TSNE():
+
+    def __init__(self):
+        pass
+
+
+
+class Main():
+
+    def __init__(self):
+        self.read_data()
+
+    def read_data(self):
+        data_read = ReadAndTransformData()
+        data_read.open_data_file()
+        data_read.read_data_file()
+        data_read.get_one_row()
+        data_read.make_all_vaiances()
+        data_read.cut_variances_smaller_than_2e4()
+        data_read.put_data_into_txt()
+        data_read.close_data_file()
+
         
 if __name__ == "__main__":
-    program = TSNE()
-    program.open_data_file()
-    program.read_data_file()
-    program.get_one_row()
-
-    program.make_all_vaiances()
-    program.cut_variances_smaller_than_2e4()
-
-    # program.make_array()
-    program.put_data_into_txt()
-
-    program.close_data_file()
+    main = Main()
