@@ -2,6 +2,8 @@ from csv import reader
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import load_digits
+from sklearn.naive_bayes import GaussianNB
+from sklearn.model_selection import train_test_split
 
 
 class ReadAndTransformData():
@@ -89,6 +91,33 @@ class TSNE():
 
         plt.show()
 
+    def train(self):
+        x_train, x_test, y_train, y_test = train_test_split(self.digits.data, self.digits.target)
+        clf = GaussianNB()
+        clf.fit(x_train, y_train)
+        predicted = clf.predict(x_test)
+        expected = y_test
+        # print(expected)
+
+        fig = plt.figure(figsize=(12, 12))
+        fig.subplots_adjust(left=0, right=1, bottom=0, top=1, hspace=0.05, wspace=0.05)
+
+        for i in range(64):
+            ax = fig.add_subplot(8, 8, i + 1, xticks=[], yticks=[])
+            ax.imshow(x_test.reshape(-1, 8, 8)[i], cmap=plt.cm.binary, interpolation='none')
+
+            if predicted[i] == expected[i]:
+                ax.text(0, 7, str(predicted[i]), color='green')
+            else:
+                ax.text(0, 7, str(predicted[i]), color='red')
+
+        plt.show()
+
+        matches = (predicted == expected)
+        print(matches.sum())
+        print(len(matches))
+
+
 
 class Main():
 
@@ -108,7 +137,8 @@ class Main():
 
     def load_tSNE(self):
         tsne = TSNE()
-        tsne.show_plots()
+        # tsne.show_plots()
+        tsne.train()
         
         
 if __name__ == "__main__":
