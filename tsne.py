@@ -6,7 +6,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import train_test_split
 
 
-class ReadAndTransformData():
+class ReadDataAndMakeVariances():
 
     def __init__(self):
         self.all_lists_with_splited_foats = []
@@ -126,7 +126,7 @@ class Main():
         self.load_tSNE()
 
     def read_data(self):
-        data_read = ReadAndTransformData()
+        data_read = ReadDataAndMakeVariances()
         data_read.open_data_file()
         data_read.read_data_file()
         data_read.get_one_row()
