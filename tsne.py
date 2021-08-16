@@ -88,7 +88,7 @@ class Main():
         print("Reading data:", end = "")
         self.read_data(file_path)
         print(f"{len(self.training_data_list)} rows")
-        print("Training:", end = "")
+        print("Training:")
         self.train()
         print(f"{len(self.results)} points")
         self.save_results(self.results, "result.txt")
@@ -120,7 +120,7 @@ class Main():
 
 
 if __name__ == "__main__":
-    main = Main('simple_file.data')
+    main = Main('dialanine-300K.data')
 
 # simple_file.data
 # 'dialanine-300K.data'
