@@ -1,8 +1,6 @@
 from csv import reader
-from time import sleep
 import numpy as np
 from sklearn.manifold import TSNE
-
 
 
 class ReadDataAndMakeVariances():
@@ -12,6 +10,7 @@ class ReadDataAndMakeVariances():
         self.all_lists_with_splited_foats = []
         self.all_measurements_of_one_distance = []
         self.variances_list = []
+        self.time_list = []
 
     def open_data_file(self):
         self.data_file = open(self.file_path, 'r')
@@ -22,9 +21,10 @@ class ReadDataAndMakeVariances():
         return self.data_file_read
 
     def make_list_of_foats(self):
-        for row in self.data_file_read:
-            for i in row:
+        for line in self.data_file_read:
+            for i in line:
                 single_number_as_string_list = i.split(" ")
+                self.time_list.append(single_number_as_string_list[1])
                 self.distances_list = single_number_as_string_list[6:]
                 single_number_as_float_list = [float(j) for j in self.distances_list]
                 self.all_lists_with_splited_foats.append(single_number_as_float_list)
@@ -62,6 +62,9 @@ class ReadDataAndMakeVariances():
         self.world_map_file_4 = open(self.file_4, 'w')
         self.world_map_file_4.write(str(self.variances_list))
 
+        self.file_5 = 'time_list.txt'
+        self.world_map_file_5 = open(self.file_5, 'w')
+        self.world_map_file_5.write(str(self.time_list))
         
     def close_data_files(self):
         self.data_file.close()
@@ -87,11 +90,11 @@ class Main():
     def __init__(self, file_path):
         print("Reading data:", end = "")
         self.read_data(file_path)
-        print(f"{len(self.training_data_list)} rows")
-        print("Training:")
-        self.train()
-        print(f"{len(self.results)} points")
-        self.save_results(self.results, "result.txt")
+        # print(f"{len(self.training_data_list)} rows")
+        # print("Training:")
+        # self.train()
+        # print(f"{len(self.results)} points")
+        # self.save_results(self.results, "result.txt")
 
     def read_data(self, file_path):
         data_read = ReadDataAndMakeVariances(file_path)
@@ -115,8 +118,6 @@ class Main():
                     print(".", end="")
                 outputfile.write(f"{point[0]} {point[1]}\n")
         print("DONE")
-
-
 
 
 if __name__ == "__main__":
