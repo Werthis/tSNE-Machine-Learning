@@ -24,7 +24,7 @@ class ReadDataAndMakeVariances():
         for line in self.data_file_read:
             for i in line:
                 single_number_as_string_list = i.split(" ")
-                self.time_list.append(int(float(single_number_as_string_list[1])))
+                self.time_list.append((single_number_as_string_list[1]))
                 self.distances_list = single_number_as_string_list[6:]
                 single_number_as_float_list = [float(j) for j in self.distances_list]
                 self.all_lists_with_splited_foats.append(single_number_as_float_list)

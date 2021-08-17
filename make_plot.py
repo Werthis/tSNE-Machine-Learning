@@ -15,12 +15,13 @@ def read_time(time_file_path):
     with open(time_file_path) as time_file:
         for line in time_file.readlines():
             # splited = line.split(" ")
-            time_list.append(int(line[0]))
+            time_list.append(float(line[0]))
+    return time_list
             
 
 if __name__ == "__main__":
     x, y = read_points("result.txt")
     time = read_time('time_list.txt')
     plt.figure()
-    plt.scatter(x, y)
+    plt.scatter(x, y, c = time, cmap='viridis')
     plt.show()
