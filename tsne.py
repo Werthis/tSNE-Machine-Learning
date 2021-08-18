@@ -11,6 +11,8 @@ class ReadDataAndMakeVariances():
         self.all_measurements_of_one_distance = []
         self.variances_list = []
         self.time_list = []
+        self.phi_list = []
+        self.psi_list = []
 
     def open_data_file(self):
         self.data_file = open(self.file_path, 'r')
@@ -24,7 +26,9 @@ class ReadDataAndMakeVariances():
         for line in self.data_file_read:
             for i in line:
                 single_number_as_string_list = i.split(" ")
-                self.time_list.append((single_number_as_string_list[1]))
+                self.time_list.append(single_number_as_string_list[1])
+                self.phi_list.append([single_number_as_string_list[3], single_number_as_string_list[4]])
+                # self.psi_list.append()
                 self.distances_list = single_number_as_string_list[6:]
                 single_number_as_float_list = [float(j) for j in self.distances_list]
                 self.all_lists_with_splited_foats.append(single_number_as_float_list)
@@ -61,14 +65,14 @@ class ReadDataAndMakeVariances():
         self.file_4 = 'variances_list.txt'
         self.world_map_file_4 = open(self.file_4, 'w')
         self.world_map_file_4.write(str(self.variances_list))
-
-        self.file_5 = 'time_list.txt'
-        self.world_map_file_5 = open(self.file_5, 'w')
-        self.world_map_file_5.write(str(self.time_list))
         
         with open('time_list.txt', "w") as time_file:
             for i in self.time_list:
                 time_file.write(f"{i}\n")
+        
+        with open('phi_psi_list.txt', "w") as time_file:
+            for i, j in self.phi_list:
+                time_file.write(f"{i} {j}\n")
 
     # def save_results(self, results, file_path):
     #     print(f"Writing to file '{file_path}': ", end = "")
