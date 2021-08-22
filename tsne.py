@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.manifold import TSNE
 
 
-class ReadDataAndMakeVariances():
+class ReadDataAndCheckVariances():
 
     def __init__(self, file_path):
         self.file_path = file_path
@@ -11,7 +11,7 @@ class ReadDataAndMakeVariances():
         self.all_measurements_of_one_distance = []
         self.variances_list = []
         self.time_list = []
-        self.phi_list = []
+        self.phi_psi_list = []
         self.psi_list = []
 
     def open_data_file(self):
@@ -22,23 +22,35 @@ class ReadDataAndMakeVariances():
         self.data_file_read = reader(self.data_file)
         return self.data_file_read
 
-    def make_list_of_foats(self):
-        for line in self.data_file_read:
-            for i in line:
-                single_number_as_string_list = i.split(" ")
-                self.time_list.append(single_number_as_string_list[1])
-                self.phi_list.append([single_number_as_string_list[3], single_number_as_string_list[4]])
-                # self.psi_list.append()
-                self.distances_list = single_number_as_string_list[6:]
-                single_number_as_float_list = [float(j) for j in self.distances_list]
-                self.all_lists_with_splited_foats.append(single_number_as_float_list)
+    def iterate_on_rows(self):
+        for row in self.data_file_read:
+            for element in row:
+                self.row_as_string_list = element.split(" ")
+                self._make_time_list()
+                self._make_phi_psi_list()
+                self._make_all_lists_with_splited_foats()
+    
+    def _make_time_list(self):
+        time = self.row_as_string_list[1]
+        return self.time_list.append(time)
 
-    def make_all_variances(self):
-        for i in range(len(self.distances_list)):
+    def _make_phi_psi_list(self):
+        phi = self.row_as_string_list[3]
+        psi = self.row_as_string_list[4]
+        return self.phi_psi_list.append([phi, psi])
+
+    def _make_all_lists_with_splited_foats(self):
+        self.one_row_distances_list = self.row_as_string_list[6:]
+        distances_from_one_row_as_float_list = [float(j) for j in self.one_row_distances_list]
+        return self.all_lists_with_splited_foats.append(distances_from_one_row_as_float_list)
+
+    def make_list_of_variances(self):
+        for i in range(len(self.one_row_distances_list)):
             for j in self.all_lists_with_splited_foats:
                 self.all_measurements_of_one_distance.append(j[i])
             single_variance = np.var(self.all_measurements_of_one_distance)
             self.variances_list.append(single_variance)
+        return self.variances_list
 
     def cut_column_if_variance_smaller_than_2e4(self):
         for i in self.variances_list:
@@ -49,40 +61,17 @@ class ReadDataAndMakeVariances():
                     row.pop(_index_to_cut)
         return self.all_lists_with_splited_foats
 
-    def put_data_into_txt_files(self):
-        self.file_1 = 'data_300K_txt.txt'
-        self.world_map_file_1 = open(self.file_1, 'w')
-        self.world_map_file_1.write(str(self.data_file_read))
-
-        self.file_2 = 'all_lists_with_splited_foats.txt'
-        self.world_map_file_2 = open(self.file_2, 'w')
-        self.world_map_file_2.write(str(self.all_lists_with_splited_foats))
-
-        self.file_3 = 'iterowanie.txt'
-        self.world_map_file_3 = open(self.file_3, 'w')
-        self.world_map_file_3.write(str(self.all_measurements_of_one_distance))
-
-        self.file_4 = 'variances_list.txt'
-        self.world_map_file_4 = open(self.file_4, 'w')
-        self.world_map_file_4.write(str(self.variances_list))
-        
+    def put_data_into_txt_files(self):      
         with open('time_list.txt', "w") as time_file:
             for i in self.time_list:
                 time_file.write(f"{i}\n")
         
-        with open('phi_psi_list.txt', "w") as time_file:
-            for i, j in self.phi_list:
-                time_file.write(f"{i} {j}\n")
-
-    # def save_results(self, results, file_path):
-    #     print(f"Writing to file '{file_path}': ", end = "")
+        with open('phi_psi_list.txt', "w") as phi_psi_file:
+            for i, j in self.phi_psi_list:
+                phi_psi_file.write(f"{i} {j}\n")
         
     def close_data_files(self):
         self.data_file.close()
-        self.world_map_file_1.close()
-        self.world_map_file_2.close()
-        self.world_map_file_3.close()
-        self.world_map_file_4.close()
 
 
 class Training():
@@ -101,18 +90,18 @@ class Main():
     def __init__(self, file_path):
         print("Reading data:", end = "")
         self.read_data(file_path)
-        # print(f"{len(self.training_data_list)} rows")
-        # print("Training:")
-        # self.train()
-        # print(f"{len(self.results)} points")
-        # self.save_results(self.results, "result.txt")
+        print(f"{len(self.training_data_list)} rows")
+        print("Training:")
+        self.train()
+        print(f"{len(self.results)} points")
+        self.save_results(self.results, "result.txt")
 
     def read_data(self, file_path):
-        data_read = ReadDataAndMakeVariances(file_path)
+        data_read = ReadDataAndCheckVariances(file_path)
         data_read.open_data_file()
         data_read.read_data_file()
-        data_read.make_list_of_foats()
-        data_read.make_all_variances()
+        data_read.iterate_on_rows()
+        data_read.make_list_of_variances()
         self.training_data_list = data_read.cut_column_if_variance_smaller_than_2e4()
         data_read.put_data_into_txt_files()
         data_read.close_data_files()
