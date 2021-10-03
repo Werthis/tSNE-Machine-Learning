@@ -1,5 +1,7 @@
 ## The program was a final task of the course 'Programming in Python' for 4 year physics students at University Nicolaus Copernicus.
 
+## `numpy`, `sklearn`, `matplotlib`
+
 
 1. Read the data set (`dialanine-300K.data`). The data set contains a simulation of alanine dipeptide at 300 K. We will focus mainly on columns d1-d45 which describe heavy atom distances of the dynamical system in nanometers.
 
